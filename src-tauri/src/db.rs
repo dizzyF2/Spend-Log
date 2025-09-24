@@ -36,11 +36,14 @@ pub fn init_db(app: &AppHandle) -> Result<Connection> {
             FOREIGN KEY(note_id) REFERENCES notes(id) ON DELETE CASCADE
         );
 
-        CREATE TABLE IF NOT EXISTS budget (
-            id INTEGER PRIMARY KEY CHECK(id = 1),
-            initial_amount REAL NOT NULL
+        CREATE TABLE IF NOT EXISTS budgets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            note_id INTEGER NOT NULL UNIQUE,
+            initial_amount REAL NOT NULL,
+            FOREIGN KEY(note_id) REFERENCES notes(id) ON DELETE CASCADE
         );
-        INSERT OR IGNORE INTO budget(id, initial_amount) VALUES(1, 0);
+
+        INSERT OR IGNORE INTO budgets(id, initial_amount) VALUES(1, 0);
         "
     )?;
 

@@ -73,21 +73,24 @@ fn sum_entries_for_note(app: AppHandle, note_id: i64) -> Result<f64, String> {
 
 // ---------------- BUDGET ----------------
 #[tauri::command]
-fn set_budget(app: AppHandle, amount: f64) -> Result<(), String> {
+fn set_budget(app: AppHandle, note_id: i64, amount: f64) -> Result<(), String> {
     let conn = init_db(&app).map_err(|e| e.to_string())?;
-    Budget::set(&conn, amount).map_err(|e| e.to_string())
+    Budget::set(&conn, note_id, amount).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-fn get_budget(app: AppHandle) -> Result<f64, String> {
+fn get_budget(app: AppHandle, note_id: i64) -> Result<f64, String> {
     let conn = init_db(&app).map_err(|e| e.to_string())?;
-    Budget::get(&conn).map_err(|e| e.to_string())
+    match Budget::get(&conn, note_id) {
+        Ok(amount) => Ok(amount),
+        Err(_) => Ok(0.0),
+    }
 }
 
 #[tauri::command]
-fn get_remaining_budget(app: AppHandle) -> Result<f64, String> {
+fn get_remaining_budget(app: AppHandle, note_id: i64) -> Result<f64, String> {
     let conn = init_db(&app).map_err(|e| e.to_string())?;
-    Budget::remaining(&conn).map_err(|e| e.to_string())
+    Budget::remaining(&conn, note_id).map_err(|e| e.to_string())
 }
 
 

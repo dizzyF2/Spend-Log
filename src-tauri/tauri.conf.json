@@ -12,9 +12,12 @@
   "app": {
     "windows": [
       {
-        "title": "spend-log",
-        "width": 800,
-        "height": 600,
+        "title": "Spend Log Notes",
+        "width": 450,
+        "height": 550,
+        "resizable": true,
+        "minWidth": 450,
+        "minHeight": 550,
         "center": true
       }
     ],

@@ -18,22 +18,22 @@ export default function BudgetSection({ noteId, budget, onUpdated }: BudgetSecti
         try {
             const value = parseFloat(amount);
             if (isNaN(value) || value <= 0) {
-                toast.error("Please enter a valid budget amount");
+                toast.error("يرجى إدخال قيمة ميزانية صالحة");
                 return;
             }
             await setBudget(noteId, value);
-            toast.success("Budget updated");
+            toast.success("تم تحديث الميزانية");
             setIsEditing(false);
             onUpdated();
         } catch (err) {
-            console.error("Failed to set budget", err);
-            toast.error("Failed to update budget");
+            console.error("فشل في تعيين الميزانية", err);
+            toast.error("فشل في تحديث الميزانية");
         }
     };
 
     return (
         <div className="p-4 border rounded-lg shadow-sm">
-            <h2 className="font-semibold text-lg mb-2">Budget</h2>
+            <h2 className="font-semibold text-lg mb-2">الميزانية</h2>
 
             {isEditing ? (
                 <div className="flex gap-2">
@@ -44,19 +44,19 @@ export default function BudgetSection({ noteId, budget, onUpdated }: BudgetSecti
                         className="w-32"
                     />
                     <Button size="sm" onClick={handleSave}>
-                        Save
+                        حفظ
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>
-                        Cancel
+                        إلغاء
                     </Button>
                 </div>
             ) : (
                 <div className="flex justify-between items-center">
                     <p className="text-gray-700">
-                        {budget ? `Current budget: $${budget}` : "No budget set"}
+                        {budget ? `الميزانية الحالية: ${budget}ج.م` : "لم يتم تعيين ميزانية"}
                     </p>
                     <Button size="sm" variant="ghost" onClick={() => setIsEditing(true)}>
-                        {budget ? "Edit" : "Set Budget"}
+                        {budget ? "تعديل" : "تعيين الميزانية"}
                     </Button>
                 </div>
             )}

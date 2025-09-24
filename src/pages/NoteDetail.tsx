@@ -50,12 +50,11 @@ export default function NoteDetail() {
             const entriesData = await getEntries(noteId);
             setEntries(entriesData);
 
-            console.log("Fetching budget for noteId:", noteId, typeof noteId);
             const budgetData = await getBudget(noteId);
             setBudget(budgetData);
         } catch (err) {
-            console.error("Failed to fetch note detail", err);
-            toast.error("Failed to fetch note detail");
+            console.error("فشل في جلب تفاصيل الملاحظة", err);
+            toast.error("فشل في جلب تفاصيل الملاحظة");
         } finally {
             setLoading(false);
         }
@@ -71,7 +70,7 @@ export default function NoteDetail() {
     };
 
     const handleDeleteEntry = async (id: number) => {
-        if (confirm("Delete this entry?")) {
+        if (confirm("هل تريد حذف هذا الصرفية؟")) {
             await deleteEntry(id);
             fetchData();
         }
@@ -85,11 +84,26 @@ export default function NoteDetail() {
         }
     };
 
+    const formatDate = (date: string | number | Date) => {
+        const d = typeof date === "number"
+            ? new Date(date * 1000)
+            : new Date(date);
+
+        return d.toLocaleString("ar-EG", {
+            timeZone: "Africa/Cairo",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
     return (
         <div className="p-4 space-y-4">
             <header className="flex justify-between items-center">
                 <Button variant="outline" onClick={() => navigate(-1)}>
-                    Back
+                    العودة
                 </Button>
 
                 <div className="flex items-center gap-2">
@@ -101,23 +115,23 @@ export default function NoteDetail() {
                                 className="w-64"
                             />
                             <Button size="sm" onClick={handleSaveTitle}>
-                                Save
+                                حفظ
                             </Button>
                             <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={() => setIsEditingTitle(false)}
                             >
-                                Cancel
+                                إلغاء
                             </Button>
                         </>
                     ) : (
                         <>
                             <h1 className="text-xl font-bold">
-                                {note?.title || `Note #${noteId}`}
+                                {note?.title || `الملاحظة #${noteId}`}
                             </h1>
                             <Button size="sm" variant="ghost" onClick={() => setIsEditingTitle(true)}>
-                                Edit
+                                تعديل
                             </Button>
                         </>
                     )}
@@ -125,14 +139,14 @@ export default function NoteDetail() {
             </header>
 
             {loading ? (
-                <p>Loading...</p>
+                <p>جارٍ التحميل...</p>
             ) : (
                 <>
                     <BudgetSection noteId={noteId} budget={budget} onUpdated={fetchData} />
 
                     {budget !== null && (
                         <div className="p-3 border rounded-lg bg-gray-50">
-                            <p className="font-medium">Remaining Budget:</p>
+                            <p className="font-medium">الميزانية المتبقية:</p>
                             <p
                                 className={`text-lg font-bold ${
                                     remainingBudget !== null && remainingBudget < 0
@@ -147,7 +161,7 @@ export default function NoteDetail() {
 
                     <div>
                         <div className="flex justify-between items-center mb-2">
-                            <h2 className="font-semibold text-lg">Entries</h2>
+                            <h2 className="font-semibold text-lg">الصرفيات</h2>
                             <Button
                                 size="sm"
                                 onClick={() => {
@@ -155,12 +169,12 @@ export default function NoteDetail() {
                                     setIsModalOpen(true);
                                 }}
                             >
-                                Add Entry
+                                إضافة صرفية
                             </Button>
                         </div>
 
                         {entries.length === 0 ? (
-                            <p>No entries yet.</p>
+                            <p>لا توجد صرفيات بعد.</p>
                         ) : (
                             <ul className="space-y-2">
                                 {entries.map((entry) => (
@@ -171,8 +185,8 @@ export default function NoteDetail() {
                                         <div>
                                             <p className="font-medium">{entry.description}</p>
                                             <p className="text-sm text-gray-500">
-                                                Spent: {entry.amount} |{" "}
-                                                {new Date(entry.created_at).toLocaleString()}
+                                                المصروف: {entry.amount} ج.م |{" "}
+                                                {formatDate(entry.created_at)}
                                             </p>
                                         </div>
                                         <div className="space-x-2">
@@ -183,14 +197,14 @@ export default function NoteDetail() {
                                                     setIsModalOpen(true);
                                                 }}
                                             >
-                                                Edit
+                                                تعديل
                                             </Button>
                                             <Button
                                                 size="sm"
                                                 variant="destructive"
                                                 onClick={() => handleDeleteEntry(entry.id)}
                                             >
-                                                Delete
+                                                حذف
                                             </Button>
                                         </div>
                                     </li>

@@ -1,7 +1,6 @@
 import { Entry, Note } from "@/types";
 import { invoke } from "@tauri-apps/api/core";
 
-
 // ---------- Notes ----------
 export const createNote = (title: string) =>
     invoke<Note>("create_note", { title });
@@ -14,7 +13,6 @@ export const updateNote = (id: number, title: string) =>
 
 export const deleteNote = (id: number) =>
     invoke<void>("delete_note", { id });
-
 
 // ---------- Entries ----------
 export const createEntry = (noteId: number, description: string, amount: number) =>
@@ -35,13 +33,12 @@ export const sumAllEntries = () =>
 export const sumEntriesForNote = (noteId: number) =>
     invoke<number>("sum_entries_for_note", { noteId });
 
+// ---------- Budget (per-note) ----------
+export const setBudget = (noteId: number, amount: number) =>
+    invoke<void>("set_budget", { noteId, amount });
 
-// ---------- Budget ----------
-export const setBudget = (amount: number) =>
-    invoke<void>("set_budget", { amount });
+export const getBudget = (noteId: number) =>
+    invoke<number>("get_budget", { noteId });
 
-export const getBudget = () =>
-    invoke<number>("get_budget");
-
-export const getRemainingBudget = () =>
-    invoke<number>("get_remaining_budget");
+export const getRemainingBudget = (noteId: number) =>
+    invoke<number>("get_remaining_budget", { noteId });

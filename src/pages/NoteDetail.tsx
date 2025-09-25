@@ -15,6 +15,7 @@ import BudgetSection from "@/components/BudgetSection";
 import EntryModal from "@/components/EntryModal";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
+import ConfirmModal from "@/components/ConfirmModal";
 
 export default function NoteDetail() {
     const { id } = useParams();
@@ -31,6 +32,9 @@ export default function NoteDetail() {
 
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [titleInput, setTitleInput] = useState("");
+
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [entryToDelete, setEntryToDelete] = useState<Entry | null>(null);
 
     const totalSpent = entries.reduce((sum, entry) => sum + entry.amount, 0);
     const remainingBudget = budget !== null ? budget - totalSpent : null;
@@ -69,11 +73,18 @@ export default function NoteDetail() {
         fetchData();
     };
 
-    const handleDeleteEntry = async (id: number) => {
-        if (confirm("هل تريد حذف هذا الصرفية؟")) {
-            await deleteEntry(id);
+    const handleDeleteEntry = (entry: Entry) => {
+        setEntryToDelete(entry);
+        setConfirmOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (entryToDelete) {
+            await deleteEntry(entryToDelete.id);
             fetchData();
+            setEntryToDelete(null);
         }
+        setConfirmOpen(false);
     };
 
     const handleSaveTitle = async () => {
@@ -149,7 +160,7 @@ export default function NoteDetail() {
                             <p className="font-medium">الميزانية المتبقية:</p>
                             <p
                                 className={`text-lg font-bold ${
-                                    remainingBudget !== null && remainingBudget < 0
+                                    remainingBudget !== null && remainingBudget <= 500
                                         ? "text-red-500"
                                         : "text-green-600"
                                 }`}
@@ -202,7 +213,7 @@ export default function NoteDetail() {
                                             <Button
                                                 size="sm"
                                                 variant="destructive"
-                                                onClick={() => handleDeleteEntry(entry.id)}
+                                                onClick={() => handleDeleteEntry(entry)}
                                             >
                                                 حذف
                                             </Button>
@@ -220,6 +231,16 @@ export default function NoteDetail() {
                 onClose={() => setIsModalOpen(false)}
                 onSave={handleSaveEntry}
                 entry={editingEntry}
+            />
+
+            <ConfirmModal
+                isOpen={confirmOpen}
+                title="حذف الصرفية؟"
+                message="هل أنت متأكد أنك تريد حذف هذه الصرفية؟ هذا الإجراء لا يمكن التراجع عنه."
+                confirmLabel="حذف"
+                cancelLabel="إلغاء"
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setConfirmOpen(false)}
             />
         </div>
     );

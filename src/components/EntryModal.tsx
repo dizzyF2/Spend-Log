@@ -29,6 +29,10 @@ export default function EntryModal({ isOpen, onClose, onSave, entry }: EntryModa
         if (!description || isNaN(parsedAmount) || parsedAmount <= 0) return;
 
         onSave(description, parsedAmount, entry?.id);
+
+        setDescription("");
+        setAmount("");
+
         onClose();
     };
 
@@ -51,6 +55,7 @@ export default function EntryModal({ isOpen, onClose, onSave, entry }: EntryModa
                     <Input
                         type="number"
                         placeholder="المبلغ"
+                        min={0}
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                     />

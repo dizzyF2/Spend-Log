@@ -16,7 +16,7 @@ export default function BudgetSection({ noteId, budget, onUpdated }: BudgetSecti
 
     const handleSave = async () => {
         try {
-            const value = parseFloat(amount);
+            const value = parseInt(amount);
             if (isNaN(value) || value <= 0) {
                 toast.error("يرجى إدخال قيمة ميزانية صالحة");
                 return;
@@ -40,6 +40,7 @@ export default function BudgetSection({ noteId, budget, onUpdated }: BudgetSecti
                     <Input
                         type="number"
                         value={amount}
+                        min={0}
                         onChange={(e) => setAmount(e.target.value)}
                         className="w-32"
                     />
